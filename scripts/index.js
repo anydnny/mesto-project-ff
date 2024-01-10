@@ -10,15 +10,13 @@
 
 
 const cardList = document.querySelector('.places__list');
-
+const cardTemplate = document.querySelector("#card-template").content;
 
 function deleteCard (cardElement) {
   cardElement.remove()
 }
 
 function createCard(card, removeCard) {
-
-  const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
   const cardDeleteBtn = cardElement.querySelector('.card__delete-button');
