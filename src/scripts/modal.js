@@ -1,41 +1,43 @@
-// Submit формы редактирования пользователя
-function editFormSubmit(evt) {
-  evt.preventDefault();
-  profileName.textContent = editFormName.value;
-  profileDesc.textContent = editFormDesc.value;
-  editPopup.classList.remove("popup_is-opened");
-  editPopupForm.removeEventListener('submit', editFormSubmit)
-}
-// Открытие формы редактирования пользователя
-function openEditPopup(popup, form, formNameField, formDescField) {
-  popup.classList.add("popup_is-opened");
-  popup.addEventListener("click", closeEditPopup);
-  window.addEventListener("keydown", closeEditPopupEsc);
-  console.log('Слушатель на закрытие')
-
-  formNameField.value = profileName.textContent;
-  formDescField.value = profileDesc.textContent;
-
-  form.addEventListener('submit', editFormSubmit)
-  console.log('Добавлен слушатель на submit')
+// Общая функция открытия попапов
+function openPopup(popup) {
+  popup.classList.add('popup_is-opened');
+  popup.addEventListener('click', handleClosePopupClick);
+  document.addEventListener('keydown', handleClosePopupEsc);
 }
 
-function closeEditPopup(evt) {
+// Общая функция закрытия попапа
+function closePopup() {
+  const openedPopup = document.querySelector('.popup_is-opened');
+  openedPopup.classList.remove('popup_is-opened');
+  openedPopup.removeEventListener('click', handleClosePopupClick);
+  document.removeEventListener('keydown', handleClosePopupEsc);
+}
+
+// Закрытие по клику
+function handleClosePopupClick(e) {
   if (
-    evt.target.classList.contains("popup__close") ||
-    evt.target.classList.contains("popup")
+    e.target.classList.contains('popup__close') ||
+    e.target.classList.contains('popup')
   ) {
-    editPopup.classList.remove("popup_is-opened");
-    editPopup.removeEventListener("click", closeEditPopup);
-    window.removeEventListener("keydown", closeEditPopupEsc);
+    closePopup();
   }
 }
 
-function closeEditPopupEsc(evt) {
-  if (evt.key === "Escape") {
-    editPopup.classList.remove("popup_is-opened");
-    window.removeEventListener("keydown", closeEditPopupEsc);
+// Закрытие по кнопке Esc
+function handleClosePopupEsc(e) {
+  if (e.key === 'Escape') {
+    closePopup();
   }
 }
 
-export {editFormSubmit, openEditPopup, closeEditPopup, closeEditPopupEsc}
+// Сабмит формы редактирования профиля
+function editFormSubmit(e, profileName, profileDesc, formName, formDesc) {
+  e.preventDefault();
+
+  profileName.textContent = formName.value;
+  profileDesc.textContent = formDesc.value;
+
+  closePopup()
+}
+
+export { openPopup, closePopup, handleClosePopupEsc, editFormSubmit };
