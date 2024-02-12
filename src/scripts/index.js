@@ -1,41 +1,99 @@
 import '../pages/index.css';
 import { initialCards } from './cards.js';
 import {
-  addStarterCards,
-  submitCardForm
+  createNewCard,
+  removeCardClick,
+  likeClickFn
 } from './card.js';
-import { openPopup, editFormSubmit } from './modal.js';
+import { openPopup, closePopup } from './modal.js';
 
 const cardList = document.querySelector('.places__list'); // список карточек
 
 // Кнопка и попап редактирования профиля
-const editBtn = document.querySelector('.profile__edit-button');
-const editPopup = document.querySelector('.popup_type_edit');
+const profileEditButton = document.querySelector('.profile__edit-button');
+const profileEditPopup = document.querySelector('.popup_type_edit');
 // Имя и описание профиля
 const profileName = document.querySelector('.profile__title');
 const profileDesc = document.querySelector('.profile__description');
 // Поля и форма редактирования профиля
-const editPopupForm = document.forms['edit-profile'];
-const editFormName = editPopupForm.elements.name;
-const editFormDesc = editPopupForm.elements.description;
+const profileEditForm = document.forms['edit-profile'];
+const profileFormName = profileEditForm.elements.name;
+const profileFormDesc = profileEditForm.elements.description;
 // Кнопка, попап и форма добавление карточки
-const addBtn = document.querySelector('.profile__add-button');
-const addPopup = document.querySelector('.popup_type_new-card');
-const addPopupForm = document.forms['new-place'];
+const newCardButton = document.querySelector('.profile__add-button');
+const newCardPopup = document.querySelector('.popup_type_new-card');
+const newCardForm = document.forms['new-place'];
+//Изображения, открытие изображения
+const imagePopup = document.querySelector('.popup_type_image');
+const popupFullImage = document.querySelector('.popup__image');
+const popupImageDesc = document.querySelector('.popup__caption');
 
 // Добавление первоначальных карточек из массива
-addStarterCards(cardList, initialCards);
+addStarterCards(initialCards);
+
+// Сабмит формы редактирования профиля
+function editFormSubmit(e) {
+  e.preventDefault();
+  profileName.textContent = profileFormName.value;
+  profileDesc.textContent = profileFormDesc.value;
+  closePopup(profileEditPopup)
+}
+
 // Слушатели для редактирования профиля
-editBtn.addEventListener('click', () => {
-  openPopup(editPopup);
-  editFormName.value = profileName.textContent;
-  editFormDesc.value = profileDesc.textContent;
+profileEditButton.addEventListener('click', () => {
+  openPopup(profileEditPopup);
+  profileFormName.value = profileName.textContent;
+  profileFormDesc.value = profileDesc.textContent;
 });
-editPopupForm.addEventListener('submit', (e) =>
-  editFormSubmit(e, profileName, profileDesc, editFormName, editFormDesc)
-);
+profileEditForm.addEventListener('submit', editFormSubmit);
+
 // Слушатели для добавления карточки
-addBtn.addEventListener('click', () => openPopup(addPopup));
-addPopupForm.addEventListener('submit', (e) =>
-  submitCardForm(e, addPopupForm, cardList)
+newCardButton.addEventListener('click', () => openPopup(newCardPopup));
+newCardForm.addEventListener('submit', (e) =>
+  submitCardForm(e, newCardForm)
 );
+
+// Добавление карточки в список
+function addCardToList(card) {
+  cardList.prepend(card);
+}
+// Сабмит формы создания карточки
+function submitCardForm(e, form) {
+  e.preventDefault();
+  const newCardValues = {
+    name: form.elements['place-name'].value,
+    link: form.elements['link'].value,
+    alt: name
+  };
+  const card = createNewCard(
+    newCardValues,
+    removeCardClick,
+    likeClickFn,
+    openFullImg
+  );
+
+  addCardToList(card);
+  form.reset();
+  closePopup(newCardPopup);
+}
+// Функция добавления исходных карточек
+function addStarterCards(initialCards) {
+  initialCards.forEach((item) => {
+    const newCard = createNewCard(
+      item,
+      removeCardClick,
+      likeClickFn,
+      openFullImg
+    );
+    addCardToList(newCard);
+  });
+}
+// Открытие фотографии
+function openFullImg(cardDesc, cardName) {
+  popupFullImage.src = cardDesc;
+  popupFullImage.alt = cardName;
+  popupImageDesc.textContent = cardName;
+
+  openPopup(imagePopup);
+}
+
