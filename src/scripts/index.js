@@ -6,6 +6,7 @@ import {
   likeClickFn
 } from './card.js';
 import { openPopup, closePopup } from './modal.js';
+import { enableValidation, clearValidation } from './validation.js'
 
 const cardList = document.querySelector('.places__list'); // список карточек
 
@@ -27,6 +28,15 @@ const newCardForm = document.forms['new-place'];
 const imagePopup = document.querySelector('.popup_type_image');
 const popupFullImage = document.querySelector('.popup__image');
 const popupImageDesc = document.querySelector('.popup__caption');
+//Элементы для валидации
+const validationSettings = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_is-active'
+};
 
 // Добавление первоначальных карточек из массива
 addStarterCards(initialCards);
@@ -41,17 +51,22 @@ function editFormSubmit(e) {
 
 // Слушатели для редактирования профиля
 profileEditButton.addEventListener('click', () => {
-  openPopup(profileEditPopup);
   profileFormName.value = profileName.textContent;
   profileFormDesc.value = profileDesc.textContent;
+  clearValidation(profileEditForm, validationSettings);
+  openPopup(profileEditPopup);
 });
+
 profileEditForm.addEventListener('submit', editFormSubmit);
 
 // Слушатели для добавления карточки
-newCardButton.addEventListener('click', () => openPopup(newCardPopup));
-newCardForm.addEventListener('submit', (e) =>
-  submitCardForm(e, newCardForm)
-);
+newCardButton.addEventListener('click', () => {
+  newCardForm.elements['place-name'].value = '';
+  newCardForm.elements['link'].value = '';
+  clearValidation(newCardForm, validationSettings);
+  openPopup(newCardPopup)
+});
+newCardForm.addEventListener('submit', (e) => submitCardForm(e, newCardForm));
 
 // Добавление карточки в список
 function addCardToList(card) {
@@ -97,3 +112,5 @@ function openFullImg(cardDesc, cardName) {
   openPopup(imagePopup);
 }
 
+// Активация валидации форм
+enableValidation(validationSettings)
