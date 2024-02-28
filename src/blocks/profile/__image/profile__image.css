@@ -1,3 +1,4 @@
+@import url(./-button/profile__image-button.css);
 .profile__image {
   width: 120px;
   height: 120px;
@@ -7,6 +8,10 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media screen and (max-width: 740px) {

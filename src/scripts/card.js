@@ -1,5 +1,7 @@
+import { deleteCardRequest, putLikePost, deleteLikePost } from "./request";
+
 // Фуникция создания карточки
-function createNewCard(cardValues, removeCardFn, likeCardFn, openCardImg) {
+function createNewCard(cardValues, userInfo, removeCardFn, likeCardFn, openCardImg, starterCard = false) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
 
@@ -7,23 +9,56 @@ function createNewCard(cardValues, removeCardFn, likeCardFn, openCardImg) {
   const cardImage = cardElement.querySelector('.card__image');
   const cardTitle = cardElement.querySelector('.card__title');
   const cardLikeBtn = cardElement.querySelector('.card__like-button');
+  const cardLikeCount = cardElement.querySelector('.card__like-count');
+
+  cardElement._id = cardValues._id;
+  cardElement._ownerId = cardValues.owner._id;
 
   cardImage.src = cardValues.link;
   cardImage.alt = `На фото ${cardValues.name}`;
   cardTitle.textContent = cardValues.name;
+  cardLikeCount.textContent = cardValues.likes.length;
 
   cardDeleteBtn.addEventListener('click', () => removeCardFn(cardElement));
   cardLikeBtn.addEventListener('click', likeCardFn);
   cardImage.addEventListener('click', () => openCardImg(cardValues.link, cardValues.name));
+
+  if(cardElement._ownerId !== userInfo.name._id) {
+    cardDeleteBtn.remove();
+  }
+  if(cardValues.likes.some((user) => user._id === userInfo.name._id)) {
+    cardLikeBtn.classList.toggle('card__like-button_is-active');
+  }
   return cardElement;
 }
 // Удаление карточки
 function removeCardClick(card) {
-  card.remove();
+  deleteCardRequest(card._id)
+    .then(() =>  card.remove())
+    .catch((err) => console.error(err));
 }
 // Лайк карточки
 function likeClickFn(e) {
-  e.target.classList.toggle('card__like-button_is-active');
+  const likedCard = e.target.closest('.card');
+  const likeCount = likedCard.querySelector('.card__like-count');
+
+  if(e.target.classList.contains('card__like-button_is-active')) {
+    deleteLikePost(likedCard._id)
+      .then((res) => res.json())
+      .then((info) => {
+        e.target.classList.remove('card__like-button_is-active');
+        likeCount.textContent = info.likes.length;
+      })
+      .catch((err) => console.error(err))
+  } else {
+    putLikePost(likedCard._id)
+      .then((res) => res.json())
+      .then((info) => {
+        e.target.classList.toggle('card__like-button_is-active');
+        likeCount.textContent = info.likes.length
+      })
+      .catch((err) => console.error(err))
+  }
 }
 
 export {
