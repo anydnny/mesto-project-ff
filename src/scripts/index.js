@@ -45,16 +45,17 @@ const validationSettings = {
   errorClass: 'popup__input-error_is-active'
 };
 
+let userId;
+
 // Сабмит формы редактирования профиля
 function editFormSubmit(e) {
   e.preventDefault();
   profileFormButton.textContent = 'Сохранение...';
   profileFormButton.disabled = true;
   patchProfileInfo(profileFormName.value, profileFormDesc.value)
-    .then((res) => checkResp(res))
-    .then(() => {
-      profileName.textContent = profileFormName.value;
-      profileDesc.textContent = profileFormDesc.value;
+    .then((info) => {
+      profileName.textContent = info.name;
+      profileDesc.textContent = info.about;
     })
     .catch((error) => {
       console.error(error);
@@ -74,7 +75,6 @@ profileAvatar.addEventListener('click', () => {
 profileAvatarForm.addEventListener('submit', () => {
   profileAvatarEditButton.textContent = 'Сохранение...'
   patchProfileAvatar(profileAvatarForm.elements.avatar.value)
-    .then((res) => checkResp(res))
     .then((info) => {
       profileAvatar.style.backgroundImage = 'url('+ info.avatar +')';
     })
@@ -97,8 +97,7 @@ profileEditForm.addEventListener('submit', editFormSubmit);
 
 // Слушатели для добавления карточки
 newCardButton.addEventListener('click', () => {
-  newCardForm.elements['place-name'].value = '';
-  newCardForm.elements['link'].value = '';
+  newCardForm.reset();
   clearValidation(newCardForm, validationSettings);
   openPopup(newCardPopup)
 });
@@ -115,8 +114,7 @@ function submitCardForm(e, form) {
 
   const newCardValues = {
     name: form.elements['place-name'].value,
-    link: form.elements['link'].value,
-    likes: []
+    link: form.elements['link'].value
   };
   const userInfo = {
     name: profileName,
@@ -126,11 +124,10 @@ function submitCardForm(e, form) {
   newCardFormButton.disabled = true;
 
   postNewCard(newCardValues)
-    .then(res => checkResp(res))
     .then((newCardInfo) => {
       const card = createNewCard(
         newCardInfo,
-        userInfo,
+        userId,
         removeCardClick,
         likeClickFn,
         openFullImg
@@ -155,11 +152,10 @@ function addStarterCards(initialCards) {
 
     const newCard = createNewCard(
       item,
-      userInfo,
+      userId,
       removeCardClick,
       likeClickFn,
-      openFullImg,
-      true
+      openFullImg
     );
     addCardToList(newCard);
   });
@@ -177,11 +173,12 @@ function openFullImg(cardDesc, cardName) {
 enableValidation(validationSettings)
 
 Promise.all([getProfileInfo(), getInitialCards()])
-.then((result) => {
-  profileName.textContent = result[0].name;
-  profileName._id = result[0]._id;
-  profileDesc.textContent = result[0].about;
-  profileAvatar.style.backgroundImage = 'url('+ result[0].avatar +')';
-  addStarterCards(result[1])
+.then(([profileInfo, initialCards]) => {
+  userId = profileInfo._id;
+  profileName.textContent = profileInfo.name;
+  profileDesc.textContent = profileInfo.about;
+  profileAvatar.style.backgroundImage = 'url('+ profileInfo.avatar +')';
+  console.log(initialCards)
+  addStarterCards(initialCards)
 })
 

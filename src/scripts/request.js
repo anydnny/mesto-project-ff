@@ -17,15 +17,17 @@ function getProfileInfo() {
   return fetch(`https://nomoreparties.co/v1/${config.cohort}/users/me`, {
     headers: {
       authorization: config.headers.authorization,
-    },
-  }).then((res) => res.json());
+    }
+  })
+  .then(res => checkResp(res));
 }
 function getInitialCards() {
   return fetch(`https://nomoreparties.co/v1/${config.cohort}/cards`, {
     headers: {
       authorization: config.headers.authorization,
-    },
-  }).then((res) => res.json());
+    }
+  })
+  .then(res => checkResp(res));
 }
 
 function patchProfileInfo(newProfileName, newProfileDesc) {
@@ -35,19 +37,18 @@ function patchProfileInfo(newProfileName, newProfileDesc) {
     body: JSON.stringify({
       name: newProfileName,
       about: newProfileDesc,
-    }),
-  });
+    })
+  })
+  .then(res => checkResp(res))
 }
 
 function postNewCard(newCardValues) {
   return fetch(`https://nomoreparties.co/v1/${config.cohort}/cards`, {
     method: "POST",
     headers: config.headers,
-    body: JSON.stringify({
-      name: newCardValues.name,
-      link: newCardValues.link,
-    }),
-  });
+    body: JSON.stringify(newCardValues)
+  })
+  .then(res => checkResp(res));
 }
 
 function deleteCardRequest(cardId) {
@@ -61,14 +62,16 @@ function putLikePost(cardId) {
   return fetch(`https://nomoreparties.co/v1/${config.cohort}/cards/likes/${cardId}`, {
     method: "PUT",
     headers: config.headers
-  });
+  })
+  .then(res => checkResp(res));
 }
 
 function deleteLikePost(cardId) {
   return fetch(`https://nomoreparties.co/v1/${config.cohort}/cards/likes/${cardId}`, {
     method: "DELETE",
     headers: config.headers
-  });
+  })
+  .then(res => checkResp(res));
 }
 
 function patchProfileAvatar(url) {
@@ -77,8 +80,9 @@ function patchProfileAvatar(url) {
     headers: config.headers,
     body: JSON.stringify({
       avatar: url
-    }),
-  });
+    })
+  })
+  .then(res => checkResp(res));
 }
 
 export {

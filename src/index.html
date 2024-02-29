@@ -42,11 +42,11 @@
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
         <fieldset class="popup__fieldset">
-          <input type="text" name="name" class="popup__input popup__input_type_name" id="profile-name" placeholder="Имя" required minlength="2" maxlength="40" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
+          <input type="text" name="name" class="popup__input popup__input_type_name" id="profile-name" placeholder="Имя" required minlength="2" maxlength="40" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
           <span class="popup__input-error profile-name-error"></span>
         </fieldset>
         <fieldset class="popup__fieldset">
-          <input type="text" name="description" class="popup__input popup__input_type_description" id="profile-description" placeholder="Занятие" required minlength="2" maxlength="200" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
+          <input type="text" name="description" class="popup__input popup__input_type_description" id="profile-description" placeholder="Занятие" required minlength="2" maxlength="200" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
           <span class="popup__input-error profile-description-error"></span>
         </fieldset>
         <button type="submit" class="button popup__button" name="submit">Сохранить</button>
@@ -59,7 +59,7 @@
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
         <fieldset class="popup__fieldset">
-          <input type="text" name="place-name" class="popup__input popup__input_type_card-name" id="place-name" placeholder="Название" required minlength="2" maxlength="30" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
+          <input type="text" name="place-name" class="popup__input popup__input_type_card-name" id="place-name" placeholder="Название" required minlength="2" maxlength="30" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы" pattern="^[a-zA-Zа-яА-ЯёЁ\- ]+$">
           <span class="popup__input-error place-name-error"></span>
         </fieldset>
         <fieldset class="popup__fieldset">

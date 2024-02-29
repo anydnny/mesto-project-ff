@@ -24,7 +24,7 @@ function setEventListeners (formElement, validationSettings) {
 function checkValidityInput (formElement, inputElement, validationSettings) {
   if(!inputElement.validity.valid) {
         if(inputElement.validity.patternMismatch) {
-          inputElement.setCustomValidity('Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы');
+          inputElement.setCustomValidity(inputElement.dataset.errorMessage);
           showInputError(formElement, inputElement, inputElement.validationMessage, validationSettings)
         } else {
           inputElement.setCustomValidity('');
@@ -52,14 +52,17 @@ function hideInputError(formElement, inputElement, validationSettings) {
   errorElement.textContent = '';
 };
 
-function toggleButtonState(inputList, buttonElement, validationSettings) {
-  if(hasInvalidInput(inputList)) {
+function disableSubmitButton(disableState, buttonElement, validationSettings) {
+  if(disableState) {
     buttonElement.classList.add(validationSettings.inactiveButtonClass);
     buttonElement.disabled = true
   } else {
     buttonElement.classList.remove(validationSettings.inactiveButtonClass);
     buttonElement.disabled = false
   }
+}
+function toggleButtonState(inputList, buttonElement, validationSettings) {
+  hasInvalidInput(inputList) ? disableSubmitButton(true, buttonElement, validationSettings):disableSubmitButton(false, buttonElement, validationSettings)
 }
 
 function hasInvalidInput(inputList) {
@@ -75,8 +78,7 @@ function clearValidation(formElement, validationSettings) {
   }
   )
   const buttonElement = formElement.querySelector(validationSettings.submitButtonSelector)
-  buttonElement.classList.add(validationSettings.inactiveButtonClass);
-  buttonElement.disabled = true
+  disableSubmitButton(true, buttonElement, validationSettings)
 }
 
 
